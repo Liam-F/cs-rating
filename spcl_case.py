@@ -7,6 +7,7 @@ def fix_teams(h_teams):
 	h_teams.loc[8349, 'Name'] = 'Good People'
 	h_teams.loc[8008, 'Name'] = 'Grayhound'
 	h_teams.loc[5293, 'Name'] = 'AVANT'
+	h_teams.loc[8030, 'Name'] = 'Not Academy'
 	return h_teams
 	
 def prep_pymc_model(n_teams, n_maps):
