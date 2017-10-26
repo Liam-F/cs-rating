@@ -17,6 +17,5 @@ def prep_pymc_model(n_teams, n_maps):
 		rating = pm.Normal('rating', 0, 1, shape=n_teams)
 		theta_tilde = pm.Normal('rate_t', mu=0, sd=1, shape=(n_maps, n_teams))
 		rating_map = pm.Deterministic('rating | map', rating + tau * theta_tilde)
-		alpha = pm.Gamma('alpha', 10, 5)
 		sigma = pm.HalfCauchy('sigma', 0.5, shape=n_maps)
 	return rating_model
