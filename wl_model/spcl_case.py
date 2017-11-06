@@ -1,5 +1,6 @@
 import pandas as pd
 import pymc3 as pm
+import numpy as np
 
 def fix_teams(h_teams):
 	h_teams.loc[7723, 'Name'] = 'Morior Invictus'
@@ -20,4 +21,14 @@ def prep_pymc_model(n_teams, n_maps):
 		alpha = pm.Normal('alpha', 1., 0.2)
 		beta = pm.Normal('beta', 0.5, 0.2)
 		sigma = pm.HalfCauchy('sigma', 0.5)
+	return rating_model
+	
+def prep_pymc_time_model(n_teams, n_maps, n_periods):
+	with pm.Model() as rating_model:
+		rho = pm.Beta('rho', 5, 8)
+		omega = pm.HalfCauchy('omega', 0.5)
+		sigma = pm.HalfCauchy('sigma', 0.5)
+		time_rating = [pm.Normal('rating_0', 0, omega, shape=n_teams)]
+		for i in np.arange(1, n_periods):
+			time_rating.append(pm.Normal('rating_'+str(i), rho*time_rating[i-1], sigma, shape=n_teams))
 	return rating_model
