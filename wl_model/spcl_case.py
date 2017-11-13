@@ -25,10 +25,14 @@ def prep_pymc_model(n_teams, n_maps):
 	
 def prep_pymc_time_model(n_teams, n_maps, n_periods):
 	with pm.Model() as rating_model:
-		rho = pm.Beta('rho', 5, 8)
-		omega = pm.HalfCauchy('omega', 0.5)
-		sigma = pm.HalfCauchy('sigma', 0.5)
+		rho = pm.Uniform('rho', -1, 1)
+		omega = pm.HalfNormal('omega', 0.5)
+		sigma = pm.HalfNormal('sigma', 0.5)
 		time_rating = [pm.Normal('rating_0', 0, omega, shape=n_teams)]
+		tau = pm.HalfCauchy('tau', 0.5)
+		time_rating_map = [pm.Deterministic('rating_0 | map', time_rating[0] + tau * theta_tilde)]
 		for i in np.arange(1, n_periods):
 			time_rating.append(pm.Normal('rating_'+str(i), rho*time_rating[i-1], sigma, shape=n_teams))
+			time_rating_map.append(pm.Deterministic('rating_'+str(i)+' | map', time_rating[i] + tau * theta_tilde))
+
 	return rating_model
